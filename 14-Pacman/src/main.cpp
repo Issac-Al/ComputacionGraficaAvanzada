@@ -1571,7 +1571,7 @@ void renderSolidScene(){
 		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
 	}
 	glm::mat4 modelMatrixMayowBody = glm::mat4(modelMatrixMayow);
-	modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.007f));
+	modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.005f));
 	mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 	mayowModelAnimate.render(modelMatrixMayowBody);
 
@@ -2697,8 +2697,6 @@ void applicationLoop() {
 		wall41Collider.c = glm::vec3(modelMatrixColliderWall41[3]);
 		wall41Collider.e = modelLargeWall.getObb().e * glm::vec3(8, 2, 0.5);
 		addOrUpdateColliders(collidersOBB, "pared41", wall41Collider, modelMatrixColliderWall41);
-
-
 		
 		//sphere colliders
 
@@ -2735,7 +2733,7 @@ void applicationLoop() {
 		}
 
 
-		// Collider de mayow
+		// Collider de pacman
 		AbstractModel::OBB mayowCollider;
 		glm::mat4 modelmatrixColliderMayow = glm::mat4(modelMatrixMayow);
 		modelmatrixColliderMayow = glm::rotate(modelmatrixColliderMayow,
@@ -2743,12 +2741,12 @@ void applicationLoop() {
 		// Set the orientation of collider before doing the scale
 		mayowCollider.u = glm::quat_cast(modelmatrixColliderMayow);
 		//modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.021, 0.021, 0.021));
-		modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.35, 0.5, 0.75));
+		modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.25, 0.4, 0.5));
 		modelmatrixColliderMayow = glm::translate(modelmatrixColliderMayow,
 				glm::vec3(mayowModelAnimate.getObb().c.x,
 						mayowModelAnimate.getObb().c.y,
 						mayowModelAnimate.getObb().c.z));
-		mayowCollider.e = mayowModelAnimate.getObb().e * glm::vec3(0.35, 0.5, 0.75) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
+		mayowCollider.e = mayowModelAnimate.getObb().e * glm::vec3(0.25, 0.4, 0.5) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
 		mayowCollider.c = glm::vec3(modelmatrixColliderMayow[3]);
 		addOrUpdateColliders(collidersOBB, "mayow", mayowCollider, modelMatrixMayow);
 
