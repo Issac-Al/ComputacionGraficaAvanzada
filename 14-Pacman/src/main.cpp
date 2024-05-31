@@ -58,6 +58,7 @@
 int screenWidth;
 int screenHeight;
 
+
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 GLFWwindow *window;
@@ -130,16 +131,17 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 
-std::string fileNames[6] = { "../Textures/mp_bloodvalley/blood-valley_ft.tga",
-		"../Textures/mp_bloodvalley/blood-valley_bk.tga",
-		"../Textures/mp_bloodvalley/blood-valley_up.tga",
-		"../Textures/mp_bloodvalley/blood-valley_dn.tga",
-		"../Textures/mp_bloodvalley/blood-valley_rt.tga",
-		"../Textures/mp_bloodvalley/blood-valley_lf.tga" };
+std::string fileNames[6] = { "../Textures/mp_bloodvalley/pacman_ft.tga",
+		"../Textures/mp_bloodvalley/pacman_bk.tga",
+		"../Textures/mp_bloodvalley/pacman_up.tga",
+		"../Textures/mp_bloodvalley/pacman_dn.tga",
+		"../Textures/mp_bloodvalley/pacman_rt.tga",
+		"../Textures/mp_bloodvalley/pacman_lf.tga" };
 
 bool exitApp = false;
 int lastMousePosX, offsetX = 0;
 int lastMousePosY, offsetY = 0;
+bool gameFinished = false;
 
 // Model matrix definitions
 glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
@@ -233,7 +235,7 @@ int maxAdvanceI = 0.0;
 int maxAdvanceC = 0.0;
 float currentTime = 0.0;
 int score = 0;
-
+int spheres_to_win = 999;
 
 // Blending model unsorted
 std::map<std::string, glm::vec3> blendingUnsorted = {
@@ -298,7 +300,7 @@ std::vector<glm::vec3> spherePosition = {
 	glm::vec3(-87.2, 0, 17.6),
 	glm::vec3(-87.2, 0, 22.6),
 	glm::vec3(-87.2, 0, 27.6),
-	glm::vec3(-87.2, 0, 32.6), //PowerUp
+	//glm::vec3(-87.2, 0, 32.6), //PowerUp
     glm::vec3(-80.2, 0, 32.6),
 	glm::vec3(-75.2, 0, 32.6),
 	glm::vec3(-75.2, 0, 37.6),
@@ -406,7 +408,7 @@ std::vector<glm::vec3> spherePosition = {
 	glm::vec3(87.2, 0, 29.6),
 	glm::vec3(87.2, 0, 34.6),
 	
-	glm::vec3(87.2, 0, 39.6),//PowerUp
+	//glm::vec3(87.2, 0, 39.6),//PowerUp
 
 	glm::vec3(84.2, 0, 39.6),
 	glm::vec3(79.2, 0, 39.6),
@@ -467,38 +469,115 @@ std::vector<glm::vec3> spherePosition = {
 	glm::vec3(-17.2, 0, -58.6),
 
 	glm::vec3(-24.2, 0, -58.6),
-	glm::vec3(-29.2, 0, -58.6),
 	glm::vec3(-34.2, 0, -58.6),
-	glm::vec3(-39.2, 0, -58.6),
 	glm::vec3(-44.2, 0, -58.6),
-	glm::vec3(-49.2, 0, -58.6),
-	glm::vec3(-54.2, 0, -58.6),
-	glm::vec3(-59.2, 0, -58.6),
+	glm::vec3(-54.2, 0, -58.6), 
 	glm::vec3(-64.2, 0, -58.6),
-	glm::vec3(-69.2, 0, -58.6),
 	glm::vec3(-72.2, 0, -58.6),
-	glm::vec3(-77.2, 0, -58.6),
 	glm::vec3(-82.2, 0, -58.6),
 	glm::vec3(-87.2, 0, -58.6),
 
 	glm::vec3(-87.2, 0, -52.6),
 	glm::vec3(-87.2, 0, -47.6),
-	glm::vec3(-87.2, 0, -42.6),
+	glm::vec3(-87.2, 0, -42.6), 
 	glm::vec3(-87.2, 0, -37.6),
-	glm::vec3(-87.2, 0, -31.6),
 
+	glm::vec3(-82.2, 0, -31.6),
+	glm::vec3(-72.2, 0, -31.6),
+	glm::vec3(-62.2, 0, -31.6),
+
+
+    glm::vec3(-87.2, 0, -31.6), 
 	glm::vec3(-87.2, 0, -62.6),
 	glm::vec3(-87.2, 0, -67.6),
-	glm::vec3(-87.2, 0, -72.6),
+	// glm::vec3(-87.2, 0, -72.6), //PowerUp
 	glm::vec3(-87.2, 0, -77.6),
 	glm::vec3(-87.2, 0, -82.6),
 	glm::vec3(-87.2, 0, -87.6),
-	
-	
 
+	glm::vec3(-82.2, 0, -87.6),
+	glm::vec3(-72.2, 0, -87.6),
+	glm::vec3(-62.2, 0, -87.6),
+	glm::vec3(-52.2, 0, -87.6),
+
+	//Cuadrante 4
+
+    glm::vec3(-19.2, 0, -58.6),
+	glm::vec3(-9.2, 0, -58.6),
+	glm::vec3(1.2, 0, -58.6),
+	glm::vec3(11.2, 0, -58.6),
+	glm::vec3(21.2, 0, -58.6),
+	glm::vec3(31.2, 0, -58.6),
+	glm::vec3(47.2, 0, -58.6),
+	glm::vec3(51.2, 0, -58.6),
+	glm::vec3(61.2, 0, -58.6),
+	glm::vec3(71.2, 0, -58.6),
+	glm::vec3(81.2, 0, -58.6),
+	glm::vec3(87.2, 0, -58.6),
+
+	glm::vec3(13.2, 0, -51.6),
+	glm::vec3(13.2, 0, -41.6),
+	glm::vec3(13.2, 0, -34.6),
+
+	glm::vec3(-30.2, 0, -51.6),
+	glm::vec3(-30.2, 0, -41.6),
+	glm::vec3(-30.2, 0, -34.6),
+
+    glm::vec3(-24.2, 0, -34.6),
+	glm::vec3(-18.2, 0, -34.6),
+
+	glm::vec3(7.2, 0, -34.6),
+	glm::vec3(1.2, 0, -34.6),
+
+	glm::vec3(87.2, 0, -46.6),
+	glm::vec3(87.2, 0, -36.6),
+
+	glm::vec3(77.2, 0, -36.6),
+	glm::vec3(67.2, 0, -36.6),
+	glm::vec3(57.2, 0, -36.6),
+	glm::vec3(47.2, 0, -36.6),
+	
+    glm::vec3(38.2, 0, -46.6),
+	glm::vec3(38.2, 0, -56.6),
+	glm::vec3(38.2, 0, -66.6),
+	glm::vec3(38.2, 0, -76.6),
+	glm::vec3(38.2, 0, -86.6),
+
+	glm::vec3(28.2, 0, -86.6),
+	glm::vec3(18.2, 0, -86.6),
+	glm::vec3(11.2, 0, -86.6),
+
+    glm::vec3(11.2, 0, -76.6),
+	glm::vec3(11.2, 0, -66.6),
+
+	glm::vec3(38.2, 0, -36.6),
+	glm::vec3(38.2, 0, -26.6),
+	glm::vec3(38.2, 0, -16.6),
+	glm::vec3(38.2, 0, -6.6),
+	glm::vec3(38.2, 0, 4.6),
+	glm::vec3(38.2, 0, 14.6),
+
+
+	glm::vec3(87.2, 0, -68.6),
+	//glm::vec3(87.2, 0, -77.6), //PowerUp
+	glm::vec3(87.2, 0, -86.6),
+
+    glm::vec3(77.2, 0, -86.6),
+	glm::vec3(67.2, 0, -86.6),
+	glm::vec3(57.2, 0, -86.6),
+	glm::vec3(47.2, 0, -86.6),
+	
+};
+
+std::vector<glm::vec3> powerUpPosition = {
+	glm::vec3(87.2, 0, -77.6),
+	glm::vec3(-87.2, 0, -72.6),
+	glm::vec3(87.2, 0, 39.6),
+	glm::vec3(-87.2, 0, 32.6),
 };
 
 std::vector<bool> spheresCollisions;
+std::vector<bool> powerUpCollisions;
 
 double deltaTime;
 double currTime, lastTime;
@@ -521,8 +600,8 @@ float rotWheelsX = 0.0;
 float rotWheelsY = 0.0;
 
 // OpenAL Defines
-#define NUM_BUFFERS 4
-#define NUM_SOURCES 4
+#define NUM_BUFFERS 5
+#define NUM_SOURCES 5
 #define NUM_ENVIRONMENTS 1
 // Listener
 ALfloat listenerPos[] = { 0.0, 0.0, 4.0 };
@@ -983,6 +1062,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	buffer[1] = alutCreateBufferFromFile("../sounds/pacman_chomp.wav");
 	buffer[2] = alutCreateBufferFromFile("../sounds/pacman_death.wav");
 	buffer[3] = alutCreateBufferFromFile("../sounds/pacman_eatghost.wav");
+	buffer[4] = alutCreateBufferFromFile("../sounds/pacman_intermission.wav");
 	int errorAlut = alutGetError();
 	if (errorAlut != ALUT_ERROR_NO_ERROR){
 		printf("- Error open files with alut texto en openGL %d !!\n", errorAlut);
@@ -1031,6 +1111,14 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	alSourcei(source[3], AL_BUFFER, buffer[3]);
 	alSourcei(source[3], AL_LOOPING, AL_FALSE);
 	alSourcef(source[3], AL_MAX_DISTANCE, 0.0);
+
+	alSourcef(source[4], AL_PITCH, 1.0f);
+	alSourcef(source[4], AL_GAIN, 2.5f);
+	alSourcefv(source[4], AL_POSITION, source1Pos);
+	alSourcefv(source[4], AL_VELOCITY, source1Vel);
+	alSourcei(source[4], AL_BUFFER, buffer[4]);
+	alSourcei(source[4], AL_LOOPING, AL_FALSE);
+	alSourcef(source[4], AL_MAX_DISTANCE, 0.0);
 
     alSourceQueueBuffers(source[0], 1, &buffer[0]);
     
@@ -1173,13 +1261,15 @@ bool processInput(bool continueApplication) {
 			//alSourcePlay(source[0]);
 			textureActivaID = textureScreenID;
 			alSourcePlay(source[0]);
-			//ALint source0State;
-			//do {
-    	    //			alGetSourcei(source[0], AL_SOURCE_STATE, &source0State);
-			//	} while (source0State == AL_PLAYING);
-			// Adjuntar el segundo buffer al source[0]
-			//alSourceQueueBuffers(source[0], 1, &buffer[1]);
-			//alSourcePlay(source[1]);
+			spheres_to_win = spherePosition.size() + powerUpPosition.size();
+			//spheres_to_win = 1;
+			ALint source0State;
+			do {
+    	    			alGetSourcei(source[0], AL_SOURCE_STATE, &source0State);
+				} while (source0State == AL_PLAYING);
+			 //Adjuntar el segundo buffer al source[0]
+			alSourceQueueBuffers(source[0], 1, &buffer[1]);
+			alSourcePlay(source[1]);
 		}
 		else if(!presionarOpcion && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS){
 			presionarOpcion = true;
@@ -1199,7 +1289,10 @@ bool processInput(bool continueApplication) {
     bool presionarEnter = glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS;
 	if(textureActivaID == textureGameOverID && presionarEnter)
 		exitApp = true;
-
+    if(textureActivaID == textureVictoryID && presionarEnter)
+		{
+			exitApp = true;
+		}
 
 	if (glfwJoystickPresent(GLFW_JOYSTICK_1) == GL_TRUE) {
 		std::cout << "Esta presente el joystick" << std::endl;
@@ -1264,19 +1357,6 @@ bool processInput(bool continueApplication) {
 		else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.6));
 			animationMayowIndex = 2;
-		}
-
-		bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-		if(!isJump && keySpaceStatus){
-			isJump = true;
-			if(powerUp){
-				powerUp = false;
-			}
-			else{
-				powerUp = true;
-			}
-			startTimeJump = currTime;
-			tmv = 0;
 		}
 
 		if(setPowerUpTime){
@@ -1344,6 +1424,17 @@ bool processInput(bool continueApplication) {
 			reset_clyde = false;
 		}	
 
+		if(spheres_to_win == 0 && !gameFinished)
+		{
+			modelMatrixMayow = glm::mat4(1.0);
+			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0f, 0.05f, 5.0f));
+			modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(-90.0f), glm::vec3(0, 1, 0));
+			textureActivaID = textureVictoryID;
+			alSourcePause(source[1]);
+			alSourcePlay(source[4]);
+			gameFinished = true;
+		}
+
 		if(reset_player){
 			modelMatrixMayow = glm::mat4(1.0);
 			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0f, 0.05f, 5.0f));
@@ -1409,11 +1500,13 @@ void prepareScene(){
 	
 	//Pacman Ghosts
 	modelGhostRed.setShader(&shaderMulLighting);
-	
+	modelGhostPink.setShader(&shaderMulLighting);
+	modelGhostBlue.setShader(&shaderMulLighting);
+	modelGhostOrange.setShader(&shaderMulLighting);
 	//Mayow
 	mayowModelAnimate.setShader(&shaderMulLighting);
-
 	modelSphere.setShader(&shaderMulLighting);
+
 
 }
 
@@ -1423,6 +1516,11 @@ void prepareDepthScene(){
 
 	//Mayow
 	mayowModelAnimate.setShader(&shaderDepth);
+	modelGhostRed.setShader(&shaderDepth);
+	modelGhostPink.setShader(&shaderDepth);
+	modelGhostBlue.setShader(&shaderDepth);
+	modelGhostOrange.setShader(&shaderDepth);
+	modelSphere.setShader(&shaderDepth);
 
 }
 
@@ -1473,7 +1571,7 @@ void renderSolidScene(){
 		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
 	}
 	glm::mat4 modelMatrixMayowBody = glm::mat4(modelMatrixMayow);
-	modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021f));
+	modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.007f));
 	mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 	mayowModelAnimate.render(modelMatrixMayowBody);
 
@@ -1514,6 +1612,10 @@ void renderSolidScene(){
 	modelLargeWall.render(modelMatrixWall35);
 	modelLargeWall.render(modelMatrixWall36);
 	modelLargeWall.render(modelMatrixWall37);
+	modelLargeWall.render(modelMatrixWall38);
+	modelLargeWall.render(modelMatrixWall39);
+	modelLargeWall.render(modelMatrixWall40);
+	modelLargeWall.render(modelMatrixWall41);
 
 	for(int i = 0; i < spherePosition.size(); i++){
 		if(spheresCollisions[i] == false)
@@ -1521,6 +1623,17 @@ void renderSolidScene(){
 			spherePosition[i].y = terrain.getHeightTerrain(spherePosition[i].x, spherePosition[i].z) + 1.0f;
 			modelSphere.setPosition(spherePosition[i]);
 			modelSphere.setScale(glm::vec3(0.75));
+			//modelSphere.setOrientation(glm::vec3(0, lamp1Orientation[i], 0));
+			modelSphere.render();
+		}
+	}
+
+	for(int i = 0; i < powerUpPosition.size(); i++){
+		if(powerUpCollisions[i] == false)
+		{
+			powerUpPosition[i].y = terrain.getHeightTerrain(powerUpPosition[i].x, powerUpPosition[i].z) + 1.0f;
+			modelSphere.setPosition(powerUpPosition[i]);
+			modelSphere.setScale(glm::vec3(1.25));
 			//modelSphere.setOrientation(glm::vec3(0, lamp1Orientation[i], 0));
 			modelSphere.render();
 		}
@@ -1622,6 +1735,10 @@ void applicationLoop() {
 
 	for (int i = 0; i < spherePosition.size(); i++) {
     		spheresCollisions.push_back(false);
+		}
+
+	for (int i = 0; i < powerUpPosition.size(); i++) {
+    		powerUpCollisions.push_back(false);
 		}
 
 	modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0f, 0.05f, 10.0f));
@@ -1787,11 +1904,6 @@ void applicationLoop() {
 	modelMatrixWall32 = glm::translate(modelMatrixWall32, glm::vec3(13.4, 29.4, 2.1));
 	modelMatrixWall32 = glm::scale(modelMatrixWall32, glm::vec3(8, 1.5, 1));
 
-	modelMatrixWall33 = glm::rotate(modelMatrixWall33, glm::radians(-90.0f), glm::vec3(1, 0, 0));
-	modelMatrixWall33 = glm::scale(modelMatrixWall33, glm::vec3(1, 1, 2));
-	modelMatrixWall33 = glm::translate(modelMatrixWall33, glm::vec3(18.9, 10.2, 2.1));
-	modelMatrixWall33 = glm::scale(modelMatrixWall33, glm::vec3(0.5, 9, 1));
-
 	modelMatrixWall34 = glm::rotate(modelMatrixWall34, glm::radians(-90.0f), glm::vec3(1, 0, 0));
 	modelMatrixWall34 = glm::scale(modelMatrixWall34, glm::vec3(1, 1, 2));
 	modelMatrixWall34 = glm::translate(modelMatrixWall34, glm::vec3(0, 93.5, 2.1));
@@ -1812,6 +1924,34 @@ void applicationLoop() {
 	modelMatrixWall37 = glm::translate(modelMatrixWall37, glm::vec3(93.5, 0, 2.1));
 	modelMatrixWall37 = glm::scale(modelMatrixWall37, glm::vec3(4, 100, 1));
 	
+    modelMatrixWall33 = glm::rotate(modelMatrixWall33, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	modelMatrixWall33 = glm::scale(modelMatrixWall33, glm::vec3(1, 1, 2));
+	modelMatrixWall33 = glm::translate(modelMatrixWall33, glm::vec3(18.9, 11.2, 2.1));
+	modelMatrixWall33 = glm::scale(modelMatrixWall33, glm::vec3(0.5, 10, 1));
+
+    modelMatrixWall38 = glm::rotate(modelMatrixWall38, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	modelMatrixWall38 = glm::scale(modelMatrixWall38, glm::vec3(1, 1, 2));
+	modelMatrixWall38 = glm::translate(modelMatrixWall38, glm::vec3(-6.2, 1.5, 2.1));
+	modelMatrixWall38 = glm::scale(modelMatrixWall38, glm::vec3(25.6, 0.5, 1));
+
+	modelMatrixWall39 = glm::rotate(modelMatrixWall39, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	modelMatrixWall39 = glm::scale(modelMatrixWall39, glm::vec3(1, 1, 2));
+	modelMatrixWall39 = glm::translate(modelMatrixWall39, glm::vec3(-31, 11.2, 2.1));
+	modelMatrixWall39 = glm::scale(modelMatrixWall39, glm::vec3(0.5, 10, 1));
+
+	modelMatrixWall40 = glm::rotate(modelMatrixWall40, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	modelMatrixWall40 = glm::scale(modelMatrixWall40, glm::vec3(1, 1, 2));
+	modelMatrixWall40 = glm::translate(modelMatrixWall40, glm::vec3(11.6, 20.8, 2.1));
+	modelMatrixWall40 = glm::scale(modelMatrixWall40, glm::vec3(7, 0.5, 1));
+
+    modelMatrixWall41 = glm::rotate(modelMatrixWall41, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+	modelMatrixWall41 = glm::scale(modelMatrixWall41, glm::vec3(1, 1, 2));
+	modelMatrixWall41 = glm::translate(modelMatrixWall41, glm::vec3(-23.6, 20.8, 2.1));
+	modelMatrixWall41 = glm::scale(modelMatrixWall41, glm::vec3(8, 0.5, 1));
+
+
+    //Ghosts
+
 	modelMatrixGhostRed = glm::translate(modelMatrixGhostRed, glm::vec3(13.6, 2.2, -12.8));
 	modelMatrixGhostRed = glm::scale(modelMatrixGhostRed, glm::vec3(1.4, 1.4, 1.4));
 	modelMatrixGhostRed = glm::rotate(modelMatrixGhostRed, glm::radians(-90.0f), glm::vec3(1, 0, 0));
@@ -1953,6 +2093,7 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades PointLights
 		 *******************************************/
+		
 		
 		/************Render de imagen de frente**************/
 		if(!iniciaPartida){
@@ -2504,6 +2645,60 @@ void applicationLoop() {
 		wall37Collider.c = glm::vec3(modelMatrixColliderWall37[3]);
 		wall37Collider.e = modelLargeWall.getObb().e * glm::vec3(4.1, 2, 100.1);
 		addOrUpdateColliders(collidersOBB, "pared37", wall37Collider, modelMatrixColliderWall37);
+        
+		glm::mat4 modelMatrixColliderWall38 = glm::mat4(1.0f);
+		modelMatrixColliderWall38[3] = modelMatrixWall38[3];
+		AbstractModel::OBB wall38Collider;
+		// Set the orientation of collider before doing the scale
+		wall38Collider.u = glm::quat_cast(modelMatrixColliderWall38);
+		modelMatrixColliderWall38 = glm::scale(modelMatrixColliderWall38,
+				glm::vec3(25.6, 2, 0.5));
+		modelMatrixColliderWall38 = glm::translate(
+				modelMatrixColliderWall38, modelLargeWall.getObb().c);
+		wall38Collider.c = glm::vec3(modelMatrixColliderWall38[3]);
+		wall38Collider.e = modelLargeWall.getObb().e * glm::vec3(25.6, 2, 0.5);
+		addOrUpdateColliders(collidersOBB, "pared38", wall38Collider, modelMatrixColliderWall38);
+
+        glm::mat4 modelMatrixColliderWall39 = glm::mat4(1.0f);
+		modelMatrixColliderWall39[3] = modelMatrixWall39[3];
+		AbstractModel::OBB wall39Collider;
+		// Set the orientation of collider before doing the scale
+		wall39Collider.u = glm::quat_cast(modelMatrixColliderWall39);
+		modelMatrixColliderWall39 = glm::scale(modelMatrixColliderWall39,
+				glm::vec3(10, 2, 0.5));
+		modelMatrixColliderWall39 = glm::translate(
+				modelMatrixColliderWall39, modelLargeWall.getObb().c);
+		wall39Collider.c = glm::vec3(modelMatrixColliderWall39[3]);
+		wall39Collider.e = modelLargeWall.getObb().e * glm::vec3(0.5, 2, 8);
+		addOrUpdateColliders(collidersOBB, "pared39", wall39Collider, modelMatrixColliderWall39);
+
+        glm::mat4 modelMatrixColliderWall40 = glm::mat4(1.0f);
+		modelMatrixColliderWall40[3] = modelMatrixWall40[3];
+		AbstractModel::OBB wall40Collider;
+		// Set the orientation of collider before doing the scale
+		wall40Collider.u = glm::quat_cast(modelMatrixColliderWall40);
+		modelMatrixColliderWall40 = glm::scale(modelMatrixColliderWall40,
+				glm::vec3(7, 2, 0.5));
+		modelMatrixColliderWall40 = glm::translate(
+				modelMatrixColliderWall40, modelLargeWall.getObb().c);
+		wall40Collider.c = glm::vec3(modelMatrixColliderWall40[3]);
+		wall40Collider.e = modelLargeWall.getObb().e * glm::vec3(7, 2, 0.5);
+		addOrUpdateColliders(collidersOBB, "pared40", wall40Collider, modelMatrixColliderWall40);
+
+		glm::mat4 modelMatrixColliderWall41 = glm::mat4(1.0f);
+		modelMatrixColliderWall41[3] = modelMatrixWall41[3];
+		AbstractModel::OBB wall41Collider;
+		// Set the orientation of collider before doing the scale
+		wall41Collider.u = glm::quat_cast(modelMatrixColliderWall41);
+		modelMatrixColliderWall41 = glm::scale(modelMatrixColliderWall41,
+				glm::vec3(8, 2, 0.5));
+		modelMatrixColliderWall41 = glm::translate(
+				modelMatrixColliderWall41, modelLargeWall.getObb().c);
+		wall41Collider.c = glm::vec3(modelMatrixColliderWall41[3]);
+		wall41Collider.e = modelLargeWall.getObb().e * glm::vec3(8, 2, 0.5);
+		addOrUpdateColliders(collidersOBB, "pared41", wall41Collider, modelMatrixColliderWall41);
+
+
 		
 		//sphere colliders
 
@@ -2523,6 +2718,23 @@ void applicationLoop() {
 			}
 		}
 
+		for (int i = 0; i < powerUpPosition.size(); i++){
+			if(powerUpCollisions[i] == false)
+			{
+			AbstractModel::SBB powerUpCollider;
+			glm::mat4 modelMatrixColliderPowerUp = glm::mat4(1.0);
+			modelMatrixColliderPowerUp = glm::translate(modelMatrixColliderPowerUp, powerUpPosition[i]);
+			addOrUpdateColliders(collidersSBB, "powerUp-" + std::to_string(i), powerUpCollider, modelMatrixColliderPowerUp);
+			// Set the orientation of collider before doing the scale
+			modelMatrixColliderPowerUp = glm::scale(modelMatrixColliderPowerUp, glm::vec3(1, 1, 1));
+			modelMatrixColliderPowerUp = glm::translate(modelMatrixColliderPowerUp, modelSphere.getSbb().c);
+			powerUpCollider.c = glm::vec3(modelMatrixColliderPowerUp[3]);
+			powerUpCollider.ratio = modelSphere.getSbb().ratio * 1.0;
+			std::get<0>(collidersSBB.find("powerUp-" + std::to_string(i))->second) = powerUpCollider;
+			}
+		}
+
+
 		// Collider de mayow
 		AbstractModel::OBB mayowCollider;
 		glm::mat4 modelmatrixColliderMayow = glm::mat4(modelMatrixMayow);
@@ -2530,12 +2742,13 @@ void applicationLoop() {
 				glm::radians(-90.0f), glm::vec3(1, 0, 0));
 		// Set the orientation of collider before doing the scale
 		mayowCollider.u = glm::quat_cast(modelmatrixColliderMayow);
-		modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.021, 0.021, 0.021));
+		//modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.021, 0.021, 0.021));
+		modelmatrixColliderMayow = glm::scale(modelmatrixColliderMayow, glm::vec3(0.35, 0.5, 0.75));
 		modelmatrixColliderMayow = glm::translate(modelmatrixColliderMayow,
 				glm::vec3(mayowModelAnimate.getObb().c.x,
 						mayowModelAnimate.getObb().c.y,
 						mayowModelAnimate.getObb().c.z));
-		mayowCollider.e = mayowModelAnimate.getObb().e * glm::vec3(0.021, 0.021, 0.021) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
+		mayowCollider.e = mayowModelAnimate.getObb().e * glm::vec3(0.35, 0.5, 0.75) * glm::vec3(0.787401574, 0.787401574, 0.787401574);
 		mayowCollider.c = glm::vec3(modelmatrixColliderMayow[3]);
 		addOrUpdateColliders(collidersOBB, "mayow", mayowCollider, modelMatrixMayow);
 
@@ -2609,7 +2822,7 @@ void applicationLoop() {
 			boxCollider.enableWireMode();
 			boxCollider.render(matrixCollider);
 		}
-
+		
 		for (std::map<std::string, std::tuple<AbstractModel::SBB, glm::mat4, glm::mat4> >::iterator it =
 				collidersSBB.begin(); it != collidersSBB.end(); it++) {
 			glm::mat4 matrixCollider = glm::mat4(1.0);
@@ -2718,6 +2931,11 @@ void applicationLoop() {
 							if(palabra == "powerUp"){
 								if(jt->first == "mayow"){
 									powerUp = true;
+									score += 200;
+									powerUpCollisions[posicion] = true;
+									collidersSBB.erase(it);
+									spheres_to_win--;
+									std::cout << spheres_to_win << std::endl;
 								}
 							}
 							else if(palabra == "sphere"){
@@ -2728,7 +2946,8 @@ void applicationLoop() {
 							    	score += 100;
 									spheresCollisions[posicion] = true;
 									collidersSBB.erase(it);
-									//std::cout << spheresCollisions[std::stoi(posicion)] << std::endl;
+									spheres_to_win--;
+									std::cout << spheres_to_win << std::endl;
 							    	//collidersSBB.empty(it);
 								}
 							}
