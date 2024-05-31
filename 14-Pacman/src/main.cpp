@@ -685,7 +685,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelLargeWall.setShader(&shaderMulLighting);
 
 	// Mayow
-	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
+	mayowModelAnimate.loadModel("../models/Pacman/HappyWalk3.fbx");
 	mayowModelAnimate.setShader(&shaderMulLighting);
 
 	modelSphere.loadModel("../models/sphere/sphere.fbx");
@@ -1215,10 +1215,10 @@ bool processInput(bool continueApplication) {
 
 		if(fabs(axes[1]) > 0.2){
 			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0, 0, -axes[1] * 0.1));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		}if(fabs(axes[0]) > 0.2){
 			modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(-axes[0] * 0.5f), glm::vec3(0, 1, 0));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		}
 
 		if(fabs(axes[3]) > 0.2){
@@ -1252,18 +1252,18 @@ bool processInput(bool continueApplication) {
 	{
 		if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
 			modelMatrixMayow = glm::rotate(modelMatrixMayow, 0.06f, glm::vec3(0, 1, 0));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		} else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
 			modelMatrixMayow = glm::rotate(modelMatrixMayow, -0.06f, glm::vec3(0, 1, 0));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		}
 		if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
 			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, 0.6));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		}
 		else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 			modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.6));
-			animationMayowIndex = 0;
+			animationMayowIndex = 2;
 		}
 
 		bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
