@@ -1325,11 +1325,6 @@ bool processInput(bool continueApplication) {
 		if(buttons[0] == GLFW_PRESS)
 			std::cout << "Se presiona x" << std::endl;
 
-		if(!isJump && buttons[0] == GLFW_PRESS){
-			isJump = true;
-			startTimeJump = currTime;
-			tmv = 0;
-		}
 	}
 
 	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -1564,8 +1559,8 @@ void renderSolidScene(){
 	modelMatrixMayow[0] = glm::vec4(ejex, 0.0);
 	modelMatrixMayow[1] = glm::vec4(ejey, 0.0);
 	modelMatrixMayow[2] = glm::vec4(ejez, 0.0);
-	modelMatrixMayow[3][1] = -GRAVITY * tmv * tmv + 3.5 * tmv + terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
-	tmv = currTime - startTimeJump;
+	//modelMatrixMayow[3][1] = -GRAVITY * tmv * tmv + 3.5 * tmv + terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
+	//tmv = currTime - startTimeJump;
 	if(modelMatrixMayow[3][1] < terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2])){
 		isJump = false;
 		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
@@ -2933,19 +2928,19 @@ void applicationLoop() {
 									powerUpCollisions[posicion] = true;
 									collidersSBB.erase(it);
 									spheres_to_win--;
-									std::cout << spheres_to_win << std::endl;
+									//std::cout << spheres_to_win << std::endl;
 								}
 							}
 							else if(palabra == "sphere"){
 								if(jt->first == "mayow"){
-									std::cout << posicion << " Posicion" << std::endl;
+									//std::cout << posicion << " Posicion" << std::endl;
 									//std::cout << it->first << " Nombre de IT" << std::endl;
 									//isCollision = false;
 							    	score += 100;
 									spheresCollisions[posicion] = true;
 									collidersSBB.erase(it);
 									spheres_to_win--;
-									std::cout << spheres_to_win << std::endl;
+									//std::cout << spheres_to_win << std::endl;
 							    	//collidersSBB.empty(it);
 								}
 							}
